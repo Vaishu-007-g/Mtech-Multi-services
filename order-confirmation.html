@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation - M-Tech Shop</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .order-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .order-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .order-header h1 {
+            color: #2d3436;
+            margin-bottom: 10px;
+        }
+
+        .Note{
+            color: #2c2c2c  ;
+        }
+
+        .order-form {
+            display: grid;
+            gap: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2d3436;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+        }
+
+        .required::after {
+            content: '*';
+            color: #dc3545;
+            margin-left: 4px;
+        }
+
+        .submit-btn {
+            background: #007bff;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .order-summary {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .order-summary h3 {
+            color: #2d3436;
+            margin-bottom: 15px;
+        }
+
+        .order-items {
+            margin-bottom: 15px;
+            color: #000000;
+        }
+
+        .order-total {
+            font-weight: bold;
+            border-top: 2px solid #000000;
+            padding-top: 15px;
+            margin-top: 15px;
+            color: #000000;
+        }
+
+        .success-message {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            text-align: center;
+            /* text-decoration-color: #000000; */
+            z-index: 1000;
+        }
+
+        .success-message-text{
+            color: #000000;            
+        }
+        .success-message i {
+            font-size: 50px;
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .form-buttons {
+            display: grid;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .home-btn {
+            background: #6c757d;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .home-btn:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="order-container">
+        <div class="order-header">
+            <h1>Complete Your Order</h1>
+            <p class="Note">Please fill in your details to confirm your order</p>
+        </div>
+
+        <div class="order-summary">
+            <h3>Order Summary</h3>
+            <div class="order-items" id="orderItems">
+                <!-- Order items will be populated dynamically -->
+            </div>
+            <div class="order-total">
+                Total: ₹<span id="orderTotal">0</span>
+            </div>
+        </div>
+
+        <form id="orderForm" class="order-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="required">Full Name</label>
+                    <input type="text" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label class="required">Age</label>
+                    <input type="number" name="age" min="18" max="120" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="required">Gender</label>
+                    <select name="gender" required>
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="required">Date of Birth</label>
+                    <input type="date" name="dob" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="required">Contact Number</label>
+                    <input type="tel" name="contact" pattern="[0-9]{10}" required>
+                </div>
+                <div class="form-group">
+                    <label class="required">Email ID</label>
+                    <input type="email" name="email" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="required">Residential Address</label>
+                <textarea name="address" rows="3" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Occupation</label>
+                <input type="text" name="occupation">
+            </div>
+
+            <div class="form-group">
+                <label>Office Address (if any)</label>
+                <textarea name="officeAddress" rows="3"></textarea>
+            </div>
+
+            <div class="form-buttons">
+                <button type="submit" class="submit-btn">Confirm Order</button>
+                <button type="button" class="home-btn" onclick="goHome()">Go Back Home</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+    <div class="success-message" id="successMessage">
+        <i class="fas fa-check-circle"></i>
+        <h2 class="success-message-text">Order Confirmed!</h2>
+        <p class="success-message-text">Thank you for your purchase.</p>
+        <p class="success-message-text">Please Visit OFfice for your Order.</p>
+        <p class="success-message-text">Your order number is: <strong id="orderNumber"></strong></p>
+        <button onclick="window.location.href='shopping.html'" class="submit-btn">
+            Continue Shopping
+        </button>
+    </div>
+
+    <script>
+        // Populate order summary from localStorage
+        document.addEventListener('DOMContentLoaded', () => {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const orderItems = document.getElementById('orderItems');
+            const orderTotal = document.getElementById('orderTotal');
+            let total = 0;
+
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                orderItems.innerHTML += `
+                    <div class="order-item">
+                        <p>${item.name} x ${item.quantity} - ₹${itemTotal.toLocaleString()}</p>
+                    </div>
+                `;
+            });
+
+            orderTotal.textContent = total.toLocaleString();
+        });
+
+        // Form submission
+        document.getElementById('orderForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            try {
+                // Get form data
+                const formData = new FormData(e.target);
+                
+                // Add cart items and total to form data
+                const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+                let orderItemsHtml = '';
+                let total = 0;
+
+                cart.forEach(item => {
+                    const itemTotal = item.price * item.quantity;
+                    total += itemTotal;
+                    orderItemsHtml += `${item.name} x ${item.quantity} - ₹${itemTotal.toLocaleString()}\n`;
+                });
+
+                // Add order items and total to form data
+                formData.append('orderItems', orderItemsHtml);
+                formData.append('orderTotal', total);
+
+                // Send data to PHP
+                const response = await fetch('process-order.php', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                // Get the raw text response first
+                const rawResponse = await response.text();
+                
+                let result;
+                try {
+                    // Try to parse the response as JSON
+                    result = JSON.parse(rawResponse);
+                } catch (e) {
+                    console.error('Server Response:', rawResponse);
+                    throw new Error('Server returned invalid response. Check console for details.');
+                }
+
+                if (result.success) {
+                    // Show success message
+                    document.getElementById('orderNumber').textContent = result.orderNumber;
+                    document.getElementById('overlay').style.display = 'block';
+                    document.getElementById('successMessage').style.display = 'block';
+
+                    // Clear cart
+                    localStorage.removeItem('cart');
+                } else {
+                    throw new Error(result.message || 'Unknown error occurred');
+                }
+                
+            } catch (error) {
+                console.error('Error details:', error);
+                alert('There was an error processing your order: ' + error.message);
+            }
+        });
+
+        function goHome() {
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html> 
