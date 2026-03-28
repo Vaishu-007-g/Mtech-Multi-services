@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M-Tech Shop</title>
+    <link rel="stylesheet" href="styles-shopping.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Coda:wght@400;800&family=Iceland&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles-shopping.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Floating Cart Button */
+        .cart-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #007bff;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .cart-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .cart-icon {
+            color: white;
+            font-size: 24px;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff4757;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* Cart Modal */
+        .cart-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 400px;
+            height: 100%;
+            background: white;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .cart-modal.active {
+            transform: translateX(0);
+        }
+
+        .cart-header {
+            padding: 20px;
+            background: #f8f9fa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-close {
+            cursor: pointer;
+            font-size: 24px;
+        }
+
+        .cart-items {
+            padding: 20px;
+            overflow-y: auto;
+            max-height: calc(100% - 180px);
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            animation: slideIn 0.3s ease;
+        }
+
+        .cart-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+
+        .cart-item-details {
+            flex-grow: 1;
+        }
+
+        .cart-item-price {
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        .cart-item-remove {
+            color: #ff4757;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .cart-total {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #eee;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 12px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .checkout-btn:hover {
+            background: #0056b3;
+        }
+
+        .add-to-cart-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .add-to-cart-btn:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        @media (max-width: 480px) {
+            .cart-modal {
+                width: 100%;
+            }
+        }
+
+        /* Checkout Form Modal */
+        .checkout-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 600px;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.2);
+            z-index: 1002;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .checkout-form {
+            display: grid;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        .payment-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .payment-option {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .payment-option:hover {
+            border-color: #007bff;
+            background: #f8f9fa;
+        }
+
+        .payment-option.selected {
+            border-color: #007bff;
+            background: #e7f1ff;
+        }
+
+        .submit-order-btn {
+            background: #28a745;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .submit-order-btn:hover {
+            background: #218838;
+        }
+
+        .close-checkout {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .order-success-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .success-content {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            animation: popIn 0.5s ease;
+        }
+
+        @keyframes popIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .success-content i {
+            font-size: 60px;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        .order-details {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .close-success-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s ease;
+        }
+
+        .close-success-btn:hover {
+            background: #45a049;
+        }
+
+        .invalid {
+            border-color: #dc3545 !important;
+        }
+
+        .invalid:focus {
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+        }
+
+        /* Add these styles if they're not already present */
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 5px 0;
+        }
+
+        .quantity-controls button {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 2px 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .quantity-controls button:hover {
+            background: #e9ecef;
+        }
+
+        .cart-item {
+            position: relative;
+            padding-right: 30px;
+        }
+
+        .cart-item-remove {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #dc3545;
+            transition: color 0.2s;
+        }
+
+        .cart-item-remove:hover {
+            color: #c82333;
+        }
+
+        @keyframes addedToCart {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        .cart-count {
+            animation: addedToCart 0.3s ease;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            min-height: 450px; /* Set minimum height */
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .product-info {
+            flex: 1;  /* Take remaining space */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .product-description {
+            color: #666;
+            margin-bottom: 10px;
+            flex: 1;  /* Allow description to grow */
+            overflow: auto;  /* Add scroll if content is too long */
+        }
+
+        .product-price {
+            font-size: 1.1em;
+            color: #e44d26;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .add-to-cart {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: auto;  /* Push button to bottom */
+            width: 100%;
+        }
+
+        .add-to-cart:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="nav-container">
+            <!-- First section - Navigation links -->
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="About-us.html">About Us</a>
+                <a href="Contact.html">Contact</a>
+            </div>
+
+            <!-- Second section - Company name -->
+            <div class="company-name">
+                M-Tech Multi Services
+            </div>
+
+            <!-- Third section - Buttons -->
+            <div class="nav-buttons">
+                <a href="zorin.html" class="nav-button">Zori Training Centre</a>
+                <a href="#products" class="nav-button">Products</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Add this floating cart button after the header -->
+    <div class="cart-btn" id="cartBtn">
+        <i class="fas fa-shopping-cart cart-icon"></i>
+        <span class="cart-count">0</span>
+    </div>
+
+    <!-- Add this cart modal -->
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-header">
+            <h3>Shopping Cart</h3>
+            <span class="cart-close">&times;</span>
+        </div>
+        <div class="cart-items">
+            <!-- Cart items will be dynamically added here -->
+        </div>
+        <div class="cart-total">
+            <h4>Total: ₹<span id="cartTotalAmount">0</span></h4>
+            <button class="checkout-btn" onclick="proceedToCheckout()">Proceed to Checkout</button>
+        </div>
+    </div>
+
+    <div class="overlay" id="cartOverlay"></div>
+
+    <!-- Shop Intro Section -->
+    <section id="shop-intro">
+        <div class="shop-intro-container">
+            <h1>Our Products</h1>
+            <p>Discover our comprehensive range of high-quality products for all your security and identification needs.</p>
+        </div>
+    </section>
+
+    <!-- Products Grid Section -->
+    <section id="products-grid">
+        <div class="products-container">
+            <!-- Row 1 -->
+            <div class="shop-items">
+                <div class="item-container">
+                    <div class="shop-item">
+                        <div class="item-image">
+                            <img src="Assets/products/Products1.jpg" alt="ID Card Printer">
+                        </div>
+                        <div class="item-details">
+                            <h3>Zebra ZXP Series 3</h3>
+                            <p>Dual-sided ID Card Printer</p>
+                            <span class="price">₹45,000</span>
+                            <button class="add-to-cart-btn">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="item-container">
+                    <div class="shop-item">
+                        <div class="item-image">
+                            <img src="Assets/products/Products2.jpeg" alt="ID Card Printer">
+                        </div>
+                        <div class="item-details">
+                            <h3>Evolis Primacy</h3>
+                            <p>Professional Card Printer</p>
+                            <span class="price">₹52,000</span>
+                            <button class="add-to-cart-btn">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="item-container">
+                    <div class="shop-item">
+                        <div class="item-image">
+                            <img src="Assets/products/Products3.jpg" alt="Biometric Device">
+                        </div>
+                        <div class="item-details">
+                            <h3>Morpho Safran</h3>
+                            <p>Fingerprint Scanner</p>
+                            <span class="price">₹12,000</span>
+                            <button class="add-to-cart-btn">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="item-container">
+                    <div class="shop-item">
+                        <div class="item-image">
+                            <img src="Assets/products/Products4.jpg" alt="Security Camera">
+                        </div>
+                        <div class="item-details">
+                            <h3>Hikvision Dome</h3>
+                            <p>4MP IP Camera</p>
+                            <span class="price">₹3,500</span>
+                            <button class="add-to-cart-btn">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+                            <!-- 2 Products row section  (Card Holders) -->
+            <div class="shop-items">
+                <div class="item-container">
+                    <div class="shop-item">
+                        <div class="item-image">
+                            <img src="Assets/products/Metalic Card Holder Black.jpg" alt="Metalic Card Holder Black">
+                        </div>
+                        <div class="item-details">
+                            <h3>Metalic Card Holder 3</h3>
+                            <p>Colour Black</p>
+                            <span class="price">₹25</span>
+                            <button class="add-to-cart-btn">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="item-container">
+                    <div class="shop-item">
+                        <div class="item-image">
+                            <img src="Assets/products/Metalic Card Holder Gold" alt="Metalic Card Holder Gold">
+                        </div>
+                        <div class="item-details">
+                            <h3>Metalic Card Holder</h3>
+                            <p>Colour Gold</p>
+                            <span class="price">₹25</span>
+                            <button class="add-to-cart-btn">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="item-container">
+                    <div class="shop-item">
+                        <div class="item-image">
+                            <img src="Assets/products/Metalic Card Holder Red.jpg" alt="Metalic Card Holder Red">
+                        </div>
+                        <div class="item-details">
+                            <h3>Metalic Card Holder Red</h3>
+                            <p>Red Colour</p>
+                            <span class="price">₹25</span>
+                            <button class="add-to-cart-btn">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="item-container">
+                    <div class="shop-item">
+                        <div class="item-image">
+                            <img src="Assets/products/Metalic Card Holder Silver.jpg" alt="Metalic Card Holder Silver">
+                        </div>
+                        <div class="item-details">
+                            <h3>Metalic Card Holder </h3>
+                            <p>Colour Silver</p>
+                            <span class="price">₹25</span>
+                            <button class="add-to-cart-btn">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+             <!-- 3 Products row section  (Card Holders) -->
+            <div class="shop-items">
+                                <div class="item-container">
+                                    <div class="shop-item">
+                                        <div class="item-image">
+                                            <img src="Assets/products/lace Flat Polyester Lanyards.jpg" alt="lace Flat Polyester Lanyards">
+                                        </div>
+                                        <div class="item-details">
+                                            <h3>lace Flat Polyester Lanyards 3</h3>
+                                            <p>Multiple Colour </p>
+                                            <span class="price">₹20</span>
+                                            <button class="add-to-cart-btn">Add to Cart</button>
+                                        </div>
+                                    </div>
+                                </div>
+                
+                                <div class="item-container">
+                                    <div class="shop-item">
+                                        <div class="item-image">
+                                            <img src="Assets/products/lace nylon lanyards.jpg" alt="lace nylon lanyards">
+                                        </div>
+                                        <div class="item-details">
+                                            <h3>lace nylon lanyards</h3>
+                                            <p>Multiple Colour </p>
+                                            <span class="price">₹25</span>
+                                            <button class="add-to-cart-btn">Add to Cart</button>
+                                        </div>
+                                    </div>
+                                </div>
+                
+                                <div class="item-container">
+                                    <div class="shop-item">
+                                        <div class="item-image">
+                                            <img src="Assets/products/lace Tubular Lanyards.jpg" alt="lace Tubular Lanyards">
+                                        </div>
+                                        <div class="item-details">
+                                            <h3>lace Tubular Lanyards</h3>
+                                            <p>Multiple Colour </p>
+                                            <span class="price">₹25</span>
+                                            <button class="add-to-cart-btn">Add to Cart</button>
+                                        </div>
+                                    </div>
+                                </div>
+                
+                                <div class="item-container">
+                                    <div class="shop-item">
+                                        <div class="item-image">
+                                            <img src="Assets/products/lace Woven Lanyards.jpg" alt="lace Woven Lanyards">
+                                        </div>
+                                        <div class="item-details">
+                                            <h3>lace Woven Lanyards</h3>
+                                            <p>Multiple Colour </p>
+                                            <span class="price">₹25</span>
+                                            <button class="add-to-cart-btn">Add to Cart</button>
+                                        </div>
+                                    </div>
+                                </div>
+            </div>
+            
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+  <footer>
+    <div class="footer-container">
+      <!-- Company Info -->
+      <div class="footer-section">
+        <h3>M-Tech Multi Services</h3>
+        <p>Your trusted partner in innovative technology solutions. We provide comprehensive ID card solutions, IT services, and security systems.</p>
+        <div class="social-links">
+          <a href="#"><img src="Assets/icons/facebook.png" alt="Facebook"></a>
+          <a href="#"><img src="Assets/icons/instagram.png" alt="Instagram"></a>
+          <a href="#"><img src="Assets/icons/whatsapp.png" alt="WhatsApp"></a>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="About-us.html">About Us</a></li>
+          <li><a href="shopping.html">Shop</a></li>
+          <li><a href="Contact.html">Contact</a></li>
+        </ul>
+      </div>
+
+      <!-- Services -->
+      <div class="footer-section">
+        <h3>Our Services</h3>
+        <ul>
+          <li><a href="shopping.html">ID Card Solutions</a></li>
+          <li><a href="shopping.html">IT Services</a></li>
+          <li><a href="shopping.html">Security Systems</a></li>
+          <li><a href="Setu-services.html">CSC Services</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact Info -->
+      <div class="footer-section">
+        <h3>Contact Us</h3>
+        <ul class="contact-info">
+          <li><i class="icon-location"></i>Shop no. 6&7, Saraswati Complex (Basement), Uttam Nagar, Jawahar Colony,Near Trimurti Chowk, Chh. Sambhajinagar.-431 005.</li>
+          <li><i class="icon-phone"></i>+91 9689911705</li>
+          <li><i class="icon-email"></i>rrmmahaonline@gmail.com</li>
+        </ul>
+      </div>
+    </div>
+    
+    <!-- Copyright -->
+    <div class="footer-bottom">
+      <p>&copy; 2024 M-Tech Multi Services. All rights reserved.</p>
+    </div>
+  </footer>
+
+    <!-- Add this before closing body tag -->
+    <div class="checkout-modal" id="checkoutModal">
+        <span class="close-checkout" onclick="closeCheckoutForm()">&times;</span>
+        <h2>Complete Your Order</h2>
+        <form id="checkoutForm" class="checkout-form">
+            <div class="form-group">
+                <label for="customerName">Full Name*</label>
+                <input type="text" id="customerName" name="customerName" required>
+            </div>
+
+            <div class="form-group">
+                <label for="age">Age*</label>
+                <input type="number" id="age" name="age" min="18" max="120" required>
+            </div>
+
+            <div class="form-group">
+                <label for="gender">Gender*</label>
+                <select id="gender" name="gender" required>
+                    <option value="">Select Gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="contact">Contact Number*</label>
+                <input type="tel" id="contact" name="contact" pattern="[0-9]{10}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address*</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="address">Delivery Address*</label>
+                <textarea id="address" name="address" rows="3" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="occupation">Occupation</label>
+                <input type="text" id="occupation" name="occupation">
+            </div>
+
+            <div class="form-group">
+                <label>Payment Method*</label>
+                <div class="payment-options">
+                    <div class="payment-option" data-method="cod">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <p>Cash on Delivery</p>
+                    </div>
+                    <div class="payment-option" data-method="online">
+                        <i class="fas fa-credit-card"></i>
+                        <p>Online Payment</p>
+                    </div>
+                    <div class="payment-option" data-method="upi">
+                        <i class="fas fa-mobile-alt"></i>
+                        <p>UPI</p>
+                    </div>
+                </div>
+                <input type="hidden" id="paymentMethod" name="paymentMethod" required>
+            </div>
+
+            <button type="submit" class="submit-order-btn">
+                Place Order
+            </button>
+        </form>
+    </div>
+
+    <div class="order-success-popup" id="orderSuccessPopup">
+        <div class="success-content">
+            <i class="fas fa-check-circle"></i>
+            <h2>Order Placed Successfully!</h2>
+            <p>Thank you for your purchase.</p>
+            <div class="order-details">
+                <p>Order ID: <span id="orderNumber"></span></p>
+                <p>Total Amount: ₹<span id="orderTotal"></span></p>
+            </div>
+            <button onclick="closeSuccessPopup()" class="close-success-btn">Continue Shopping</button>
+        </div>
+    </div>
+
+    <script>
+    // Cart functionality
+    let cart = [];
+    const cartBtn = document.getElementById('cartBtn');
+    const cartModal = document.getElementById('cartModal');
+    const cartOverlay = document.getElementById('cartOverlay');
+    const cartItemsContainer = document.querySelector('.cart-items');
+    const cartCountElement = document.querySelector('.cart-count');
+    const cartTotalElement = document.getElementById('cartTotalAmount');
+
+    // Add to cart functionality
+    document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const productCard = this.closest('.shop-item');
+            const product = {
+                id: Date.now(), // Unique ID for each item
+                name: productCard.querySelector('h3').textContent,
+                price: parseFloat(productCard.querySelector('.price').textContent.replace('₹', '').replace(',', '')),
+                image: productCard.querySelector('img').src,
+                quantity: 1
+            };
+
+            addToCart(product);
+            showAddedAnimation(button);
+        });
+    });
+
+    function addToCart(product) {
+        const existingItem = cart.find(item => item.name === product.name);
+        
+        if (existingItem) {
+            existingItem.quantity++;
+        } else {
+            cart.push(product);
+        }
+        
+        updateCart();
+        updateCartCount();
+    }
+
+    function updateCart() {
+        cartItemsContainer.innerHTML = '';
+        let total = 0;
+
+        cart.forEach(item => {
+            total += item.price * item.quantity;
+            cartItemsContainer.innerHTML += `
+                <div class="cart-item" data-id="${item.id}">
+                    <img src="${item.image}" alt="${item.name}">
+                    <div class="cart-item-details">
+                        <h4>${item.name}</h4>
+                        <div class="quantity-controls">
+                            <button onclick="updateQuantity(${item.id}, -1)">-</button>
+                            <span>${item.quantity}</span>
+                            <button onclick="updateQuantity(${item.id}, 1)">+</button>
+                        </div>
+                        <p class="cart-item-price">₹${(item.price * item.quantity).toLocaleString()}</p>
+                    </div>
+                    <i class="fas fa-trash cart-item-remove" onclick="removeFromCart(${item.id})"></i>
+                </div>
+            `;
+        });
+
+        cartTotalElement.textContent = total.toLocaleString();
+    }
+
+    function updateQuantity(id, change) {
+        const item = cart.find(item => item.id === id);
+        if (item) {
+            item.quantity += change;
+            if (item.quantity < 1) {
+                removeFromCart(id);
+            } else {
+                updateCart();
+                updateCartCount();
+            }
+        }
+    }
+
+    function removeFromCart(id) {
+        cart = cart.filter(item => item.id !== id);
+        updateCart();
+        updateCartCount();
+    }
+
+    function updateCartCount() {
+        const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+        cartCountElement.textContent = totalItems;
+    }
+
+    function showAddedAnimation(button) {
+        button.innerHTML = '<i class="fas fa-check"></i> Added!';
+        button.style.backgroundColor = '#28a745';
+        button.disabled = true;
+
+        setTimeout(() => {
+            button.innerHTML = 'Add to Cart';
+            button.style.backgroundColor = '';
+            button.disabled = false;
+        }, 1500);
+    }
+
+    // Cart modal toggle
+    cartBtn.addEventListener('click', () => {
+        cartModal.style.display = 'block';
+        cartOverlay.style.display = 'block';
+        setTimeout(() => cartModal.classList.add('active'), 10);
+    });
+
+    document.querySelector('.cart-close').addEventListener('click', closeCart);
+    cartOverlay.addEventListener('click', closeCart);
+
+    function closeCart() {
+        cartModal.classList.remove('active');
+        setTimeout(() => {
+            cartModal.style.display = 'none';
+            cartOverlay.style.display = 'none';
+        }, 300);
+    }
+
+    // Add this new function for checkout
+    function proceedToCheckout() {
+        if (cart.length === 0) {
+            alert('Your cart is empty! Please add items before checking out.');
+            return;
+        }
+        
+        // Save cart data to localStorage
+        localStorage.setItem('cart', JSON.stringify(cart));
+        
+        // Redirect to order confirmation page
+        window.location.href = 'order-confirmation.html';
+    }
+    </script>
+</body>
+</html> 

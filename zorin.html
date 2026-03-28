@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zori Training Centre - M-Tech Multi Services</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Specific styles for Zorin page */
+        .warning-banner {
+            background: linear-gradient(45deg, #ff9800, #ff5722);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            animation: pulse 2s infinite;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 40px;
+        }
+
+        .course-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .course-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .course-details {
+            padding: 15px 0;
+        }
+
+        .course-details h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .course-details p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .enroll-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: inline-block;
+            margin-top: 15px;
+            text-decoration: none;
+        }
+
+        .enroll-btn:hover {
+            background-color: #45a049;
+        }
+
+        /* Add these styles to your existing style section */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            animation: fadeIn 0.3s;
+            overflow-y: auto;
+            padding: 20px 0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: white;
+            width: 90%;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 10px;
+            position: relative;
+            animation: slideIn 0.3s;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .modal-content::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        .close-btn {
+            position: absolute;
+            right: 20px;
+            top: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .registration-form {
+            display: grid;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .submit-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .submit-btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section (Same as main site) -->
+    <header>
+        <div class="nav-container">
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="About-us.html">About Us</a>
+                <a href="Contact.html">Contact</a>
+            </div>
+            <div class="company-name">
+                M-Tech Multi Services
+            </div>
+            <div class="nav-buttons">
+                <a href="#" class="nav-button">Zori Training Centre</a>
+                <a href="shopping.html" class="nav-button">Products</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Warning Animation Banner -->
+    <div class="warning-banner">
+        <h2>🎓 Transform Your Career with Professional IT Training! 🚀</h2>
+        <p>Limited seats available - Enroll now and get special early bird discounts!</p>
+    </div>
+
+    <!-- Courses Grid -->
+    <div class="courses-grid">
+        <!-- Tally Course -->
+        <div class="course-card">
+            <img src="Assets/Zorin assets/Tally-Prime.png" alt="Tally Course">
+            <div class="course-details">
+                <h3>Tally Prime with GST</h3>
+                <p>Complete accounting and business management course with GST implementation using Tally Prime.</p>
+                <p><strong>Duration:</strong> 2 months</p>
+                <a href="Contact.html" class="enroll-btn">Enroll Now</a>
+            </div>
+        </div>
+
+        <!-- C++ Course -->
+        <div class="course-card">
+            <img src="Assets/Zorin assets/C++.jpg" alt="C++ Course">
+            <div class="course-details">
+                <h3>C++ Programming</h3>
+                <p>Learn object-oriented programming with C++. Perfect for beginners and intermediate programmers.</p>
+                <p><strong>Duration:</strong> 3 months</p>
+                <a href="Contact.html" class="enroll-btn">Enroll Now</a>
+            </div>
+        </div>
+
+        <!-- C Programming Course -->
+        <div class="course-card">
+            <img src="Assets/Zorin assets/C.jpg" alt="C Programming Course">
+            <div class="course-details">
+                <h3>C Programming</h3>
+                <p>Master the fundamentals of programming with C language. Build a strong programming foundation.</p>
+                <p><strong>Duration:</strong> 2 months</p>
+                <a href="Contact.html" class="enroll-btn">Enroll Now</a>
+            </div>
+        </div>
+
+        <!-- DTO Course -->
+        <div class="course-card">
+            <img src="Assets/Zorin assets/DTP.jpg" alt="DTO Course">
+            <div class="course-details">
+                <h3>Desktop Operator (DTO)</h3>
+                <p>Comprehensive course covering office applications, typing, and basic computer operations.</p>
+                <p><strong>Duration:</strong> 3 months</p>
+                <a href="Contact.html" class="enroll-btn">Enroll Now</a>
+            </div>
+        </div>
+
+        <!-- CCC Course -->
+        <div class="course-card">
+            <img src="Assets/Zorin assets/CCC.jpg" alt="CCC Course">
+            <div class="course-details">
+                <h3>CCC - Course on Computer Concepts</h3>
+                <p>NIELIT's foundation level computer literacy program perfect for beginners and government job aspirants.</p>
+                <p><strong>Duration:</strong> 2 months</p>
+                <a href="Contact.html" class="enroll-btn">Enroll Now</a>
+            </div>
+        </div>
+
+        <!-- Python Course -->
+        <div class="course-card">
+            <img src="Assets/Zorin assets/Python.jpg" alt="Python Course">
+            <div class="course-details">
+                <h3>Python Programming</h3>
+                <p>Learn Python programming for web development, data science, and automation.</p>
+                <p><strong>Duration:</strong> 3 months</p>
+                <a href="Contact.html" class="enroll-btn">Enroll Now</a>
+            </div>
+        </div>
+
+        <!-- Java Course -->
+        <div class="course-card">
+            <img src="Assets/Zorin assets/Java.png" alt="Java Course">
+            <div class="course-details">
+                <h3>Java Programming</h3>
+                <p>Comprehensive Java programming course covering core concepts and advanced topics.</p>
+                <p><strong>Duration:</strong> 4 months</p>
+                <a href="Contact.html" class="enroll-btn">Enroll Now</a>
+            </div>
+        </div>
+
+        <!-- Web Development Course -->
+        <div class="course-card">
+            <img src="Assets/Zorin assets/web dev.jpg" alt="Web Development Course">
+            <div class="course-details">
+                <h3>Web Development (HTML & CSS)</h3>
+                <p>Learn to create modern, responsive websites using HTML5 and CSS3.</p>
+                <p><strong>Duration:</strong> 2 months</p>
+                <a href="Contact.html" class="enroll-btn">Enroll Now</a>
+            </div>
+        </div>
+
+        <!-- App Development Course -->
+        <div class="course-card">
+            <img src="Assets/Zorin assets/App Dev.jpg" alt="App Development Course">
+            <div class="course-details">
+                <h3>Mobile App Development</h3>
+                <p>Learn to create mobile applications for Android and iOS platforms.</p>
+                <p><strong>Duration:</strong> 4 months</p>
+                <a href="Contact.html" class="enroll-btn">Enroll Now</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+  <footer>
+    <div class="footer-container">
+      <!-- Company Info -->
+      <div class="footer-section">
+        <h3>M-Tech Multi Services</h3>
+        <p>Your trusted partner in innovative technology solutions. We provide comprehensive ID card solutions, IT services, and security systems.</p>
+        <div class="social-links">
+          <a href="#"><img src="Assets/icons/facebook.png" alt="Facebook"></a>
+          <a href="#"><img src="Assets/icons/instagram.png" alt="Instagram"></a>
+          <a href="#"><img src="Assets/icons/whatsapp.png" alt="WhatsApp"></a>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="About-us.html">About Us</a></li>
+          <li><a href="shopping.html">Shop</a></li>
+          <li><a href="Contact.html">Contact</a></li>
+        </ul>
+      </div>
+
+      <!-- Services -->
+      <div class="footer-section">
+        <h3>Our Services</h3>
+        <ul>
+          <li><a href="shopping.html">ID Card Solutions</a></li>
+          <li><a href="shopping.html">IT Services</a></li>
+          <li><a href="shopping.html">Security Systems</a></li>
+          <li><a href="Setu-services.html">CSC Services</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact Info -->
+      <div class="footer-section">
+        <h3>Contact Us</h3>
+        <ul class="contact-info">
+          <li><i class="icon-location"></i>Shop no. 6&7, Saraswati Complex (Basement), Uttam Nagar, Jawahar Colony,Near Trimurti Chowk, Chh. Sambhajinagar.-431 005.</li>
+          <li><i class="icon-phone"></i>+91 9689911705</li>
+          <li><i class="icon-email"></i>rrmmahaonline@gmail.com</li>
+        </ul>
+      </div>
+    </div>
+    
+    <!-- Copyright -->
+    <div class="footer-bottom">
+      <p>&copy; 2024 M-Tech Multi Services. All rights reserved.</p>
+    </div>
+  </footer>
+
+    <!-- Add this modal markup before the closing body tag -->
+    <div id="registrationModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Course Registration</h2>
+            <form class="registration-form" id="courseRegistration">
+                <div class="form-group">
+                    <label for="courseName">Selected Course</label>
+                    <input type="text" id="courseName" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="name">Full Name*</label>
+                    <input type="text" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email Address*</label>
+                    <input type="email" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone Number*</label>
+                    <input type="tel" id="phone" required>
+                </div>
+                <div class="form-group">
+                    <label for="education">Educational Qualification</label>
+                    <input type="text" id="education">
+                </div>
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <textarea id="address" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="batch">Preferred Batch*</label>
+                    <select id="batch" required>
+                        <option value="">Select Batch</option>
+                        <option value="morning">Morning (9 AM - 12 PM)</option>
+                        <option value="afternoon">Afternoon (2 PM - 5 PM)</option>
+                        <option value="evening">Evening (6 PM - 9 PM)</option>
+                    </select>
+                </div>
+                <button type="submit" class="submit-btn">Submit Registration</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Update the enroll buttons to use the modal
+        document.querySelectorAll('.enroll-btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const courseName = this.closest('.course-card').querySelector('h3').textContent;
+                document.getElementById('courseName').value = courseName;
+                document.getElementById('registrationModal').style.display = 'block';
+            });
+        });
+
+        // Close modal functionality
+        document.querySelector('.close-btn').addEventListener('click', function() {
+            document.getElementById('registrationModal').style.display = 'none';
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(e) {
+            if (e.target == document.getElementById('registrationModal')) {
+                document.getElementById('registrationModal').style.display = 'none';
+            }
+        });
+
+        // Form submission handling
+        document.getElementById('courseRegistration').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Collect form data
+            const formData = {
+                course: document.getElementById('courseName').value,
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                education: document.getElementById('education').value,
+                address: document.getElementById('address').value,
+                batch: document.getElementById('batch').value
+            };
+
+            // You can handle the form submission here
+            // For now, we'll just show an alert
+            alert('Registration submitted successfully! We will contact you soon.');
+            
+            // Close the modal and reset form
+            document.getElementById('registrationModal').style.display = 'none';
+            this.reset();
+        });
+    </script>
+</body>
+</html> 

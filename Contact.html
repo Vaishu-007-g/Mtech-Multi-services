@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .contact-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .contact-info {
+            padding: 30px;
+        }
+
+        .contact-info h2 {
+            font-size: 2.5em;
+            color: #2d3436;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .Para{
+            color: #2d3436;
+        }
+        .contact-info h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: #007bff;
+        }
+
+        .contact-details {
+            margin-top: 40px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .contact-item:hover {
+            transform: translateX(10px);
+        }
+
+        .contact-icon {
+            width: 40px;
+            height: 40px;
+            background: #007bff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+
+        .contact-icon i {
+            color: white;
+            font-size: 20px;
+        }
+
+        .contact-text h3 {
+            margin: 0;
+            font-size: 1.1em;
+            color: #2d3436;
+        }
+
+        .contact-text p {
+            margin: 5px 0 0;
+            color: #636e72;
+        }
+
+        .contact-form {
+            padding: 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .form-group label {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #636e72;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .form-group.textarea label {
+            top: 20px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        .form-group input:focus + label,
+        .form-group textarea:focus + label,
+        .form-group input:not(:placeholder-shown) + label,
+        .form-group textarea:not(:placeholder-shown) + label {
+            top: -12px;
+            left: 10px;
+            font-size: 12px;
+            background: white;
+            padding: 0 5px;
+            color: #007bff;
+        }
+
+        .submit-btn {
+            background: #007bff;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .contact-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .success-message {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* New styles for success message */
+        .success-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            text-align: center;
+            animation: popIn 0.5s ease;
+        }
+
+        .success-popup.show {
+            display: block;
+        }
+
+        .success-popup i {
+            font-size: 50px;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        .success-popup h3 {
+            color: #2d3436;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        .success-popup p {
+            color: #636e72;
+            margin-bottom: 20px;
+        }
+
+        .success-popup button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s ease;
+        }
+
+        .success-popup button:hover {
+            background: #45a049;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes popIn {
+            from {
+                transform: translate(-50%, -60%);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, -50%);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+   
+  <header>
+    <div class="nav-container">
+        <!-- First section - Navigation links -->
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="About-us.html">About Us</a>
+            <a href="Contact.html">Contact</a>
+        </div>
+
+        <!-- Second section - Company name -->
+        <div class="company-name">
+            M-Tech Multi Services
+        </div>
+
+        <!-- Third section - Buttons -->
+        <div class="nav-buttons">
+            <a href="zorin.html" class="nav-button">Zori Training Centre</a>
+            <a href="shopping.html" class="nav-button">Products</a>
+        </div>
+    </div>
+</header>
+    <!-- Contact Section -->
+  <div class="contact-container">
+    <div class="contact-info">
+        <h2>Get in Touch</h2>
+        <p class="Para">We'd love to hear from you. Please fill out the form or contact us using the information below.</p>
+        
+        <div class="contact-details">
+            <div class="contact-item">
+                <div class="contact-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div class="contact-text">
+                    <h3>Our Location</h3>
+                    <p>Shop no. 6&7, Saraswati Complex (Basement), Uttam Nagar, Jawahar Colony,Near Trimurti Chowk, Chh. Sambhajinagar,Maharashtra,India -431 005</p>
+                </div>
+            </div>
+
+            <div class="contact-item">
+                <div class="contact-icon">
+                    <i class="fas fa-phone"></i>
+                </div>
+                <div class="contact-text">
+                    <h3>Phone Number</h3>
+                    <p>+91 9689911705</p>
+                </div>
+            </div>
+
+            <div class="contact-item">
+                <div class="contact-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <div class="contact-text">
+                    <h3>Email Address</h3>
+                    <p>rrmmahaonline@gmail.com</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="contact-form">
+        <form id="contactForm" action="https://api.web3forms.com/submit" method="POST">
+            <input type="hidden" name="access_key" value="43b384b8-dc9d-40c7-94f6-4437456c00e2">
+            
+            <div class="form-group">
+                <input type="text" id="name" name="name" required placeholder=" ">
+                <label for="name">Your Name</label>
+            </div>
+
+            <div class="form-group">
+                <input type="email" id="email" name="email" required placeholder=" ">
+                <label for="email">Email Address</label>
+            </div>
+
+            <div class="form-group textarea">
+                <textarea id="message" name="message" rows="5" required placeholder=" "></textarea>
+                <label for="message">Your Message</label>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                <span>Send Message</span>
+            </button>
+        </form>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+  <div class="success-popup" id="successPopup">
+    <i class="fas fa-check-circle"></i>
+    <h3>Thank You!</h3>
+    <p>Your message has been sent successfully.</p>
+    <p>We'll get back to you soon!</p>
+    <button onclick="closeSuccessPopup()">Close</button>
+  </div>
+
+  <script>
+    const form = document.getElementById('contactForm');
+    const successPopup = document.getElementById('successPopup');
+    const overlay = document.getElementById('overlay');
+
+    function showSuccessPopup() {
+        overlay.style.display = 'block';
+        successPopup.classList.add('show');
+    }
+
+    function closeSuccessPopup() {
+        overlay.style.display = 'none';
+        successPopup.classList.remove('show');
+    }
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        try {
+            const formData = new FormData(form);
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                // Show success popup
+                showSuccessPopup();
+                form.reset();
+
+                // Reset floating labels
+                document.querySelectorAll('.form-group').forEach(group => {
+                    group.classList.remove('focused');
+                });
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    });
+
+    // Close popup when clicking overlay
+    overlay.addEventListener('click', closeSuccessPopup);
+
+    // Close popup with Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && successPopup.classList.contains('show')) {
+            closeSuccessPopup();
+        }
+    });
+
+    // Add floating label animation
+    document.querySelectorAll('.form-group input, .form-group textarea').forEach(element => {
+        element.addEventListener('focus', (e) => {
+            e.target.parentElement.classList.add('focused');
+        });
+
+        element.addEventListener('blur', (e) => {
+            if (!e.target.value) {
+                e.target.parentElement.classList.remove('focused');
+            }
+        });
+    });
+  </script>
+</body>
+</html>
